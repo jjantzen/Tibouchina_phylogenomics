@@ -1,0 +1,14 @@
+#!/bin/sh
+#SBATCH --job-name=species_DA
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=50gb
+#SBATCH --time=72:00:00
+#SBATCH --output=logs/speciesDA.%A.%a.out
+#SBATCH --error=logs/speciesDA.%A.%a.err
+#SBATCH --qos=soltis-b
+
+java -jar ../speciesDA.jar -burnin 10000 species.trees output_species_DA.txt

@@ -1,0 +1,23 @@
+#!/bin/sh
+#SBATCH --job-name=quartet.sc
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=5
+#SBATCH --mem=2gb
+#SBATCH --time=0-06:00:00
+#SBATCH --output=logs/quartet.sc.%j.out
+#SBATCH --error=logs/quartet.sc.%j.err
+#SBATCH --qos=soltis-b
+
+cd $SLURM_SUBMIT_DIR
+date
+hostname
+
+module purge
+module load python3 #raxml-ng/0.9.0
+
+#python3 quartetsampling/pysrc/quartet_sampling.py --tree supercontig.concat.reduced.treefile --align supercontig.supermatrix.reduced.phy --reps 300 --threads 5 --lnlike 2 --engine-exec /home/cchoward/bin/iqtree-1.7-beta16-Linux/bin/iqtree --genetrees lede.supercontig.partition --ignore-errors
+
+python3 ../quartetsampling/pysrc/quartet_sampling.py --tree sc.concat.treefile --align SC_diploid_concat.phy --reps 300 --threads 5 --lnlike 2 --engine-exec /apps/raxml-ng/0.9.0/bin/raxml-ng --genetrees SC_diploid_trimal50_partition.txt --ignore-errors

@@ -1,0 +1,15 @@
+treefile = ITS_constrained.tre
+numsites = 603
+mrca = Melastomeae Medinilla_septentrionalis A07_Aspera Microlicia_sp
+mrca = Melastomatoideae Macrocentrum_repens Tetrazygia_urbanii
+mrca = Melastomataceae_crown A29_Angustifolia Rhynchocalyx_lawsonioides
+mrca = ROOT Myrtus_communis Rhexia_mariana
+min = Melastomeae 23
+max = Melastomeae 26
+min = Melastomatoideae 58
+min = Melastomataceae_crown 82.4
+max = Melastomataceae_crown 98
+max = ROOT 125
+thorough
+prime
+nthreads = 2

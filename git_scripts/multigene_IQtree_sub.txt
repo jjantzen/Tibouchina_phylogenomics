@@ -1,0 +1,87 @@
+#!/bin/sh
+#SBATCH --job-name=sc.iqtree
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=5
+#SBATCH --mem=30gb
+#SBATCH --time=2-00:00:00
+#SBATCH --output=logs/sc.iqtree.%j.out
+#SBATCH --error=logs/sc.iqtree.%j.err
+#SBATCH --qos=soltis-b
+
+cd $SLURM_SUBMIT_DIR
+date
+hostname
+
+module purge
+module load intel/2018 openmpi/3.1.2
+
+#* -s alignment file (concatenated phyx fasta file)
+# -te fixed user tree
+# -o outgroup
+#* -nt number of CPUs
+#* -m Model selection (TEST = automatic model selection follwed by tree building using model)
+# -merit select optimality criterion (AIC, AICc, BIC)
+# -q specify partition file OR -spp partitions have different evoltuionary speed OR -sp unlinked partitions
+# -g specify a topological constraint, does not need all taxa
+# -pers perturbation strength, recommended a low number for small sequences
+# -nstop number of unsucessful iteration, again, recommended for small sequences
+# -bb ultrafast bootstrap iterations
+# -rcluster
+# -bsam
+# -spp
+#--prefix (version2 or --pre for version 1)
+# -p ALN_DIR (can specify directory with alignments and infer species tree using mutliple loci - concatenated) - for version 2
+# -S ALN_DIR (can specify directory as for p but estimates separately for gene tree inference)
+
+# Inferring the species tree
+#/home/cchoward/bin/iqtree-1.7-beta16-Linux/bin/iqtree -s SC_diploid_trimal50_concat.fasta \
+#-spp SC_diploid_trimal50_partition.txt \
+#-m TESTMERGE -rcluster 10 \
+#-bsam GENESITE \
+#-bb 1000 \
+#-nt $SLURM_CPUS_ON_NODE \
+#--prefix sc.concat
+#####-p ../Alignments/Nuclear/Diploid_only/SC_loci/Trimal_post_manual_realignment \
+
+# Inferring gene/locus tree; -S computes individual locus trees given a partition file
+#/home/cchoward/bin/iqtree-1.7-beta16-Linux/bin/iqtree -s SC_diploid_trimal50_concat.fasta \
+#-S SC_diploid_trimal50_partition.txt \
+#-m TESTMERGE -rcluster 10 \
+#-bsam GENESITE \
+#-nt $SLURM_CPUS_ON_NODE \
+#--prefix sc.loci
+
+
+/home/cchoward/bin/iqtree-1.7-beta16-Linux/bin/iqtree -s SC_diploid_trimal50_concat.fasta \
+-S SC_diploid_trimal50_partition.txt \
+-m TESTMERGE -rcluster 10 \
+-B 1000 \
+-nt $SLURM_CPUS_ON_NODE \
+--prefix sc.loci.bs
+
+
+# Gene concordance fastor (gCF) analysis
+#module purge
+#module load intel/2019.1.144 openmpi/4.0.1 iq-tree/2.0-rc1
+#iqtree-mpi -t sc.concat.treefile \
+#--gcf sc.loci.treefile \
+#-s SC_diploid_trimal50_concat.fasta \ 
+#--scf 100 \
+#--prefix sc.concord \
+#-T $SLURM_CPUS_ON_NODE
+
+
+#/home/cchoward/bin/iqtree-1.7-beta16-Linux/bin/iqtree -t sc.concat.treefile \
+#--gcf sc.loci.treefile \
+#-s SC_diploid_trimal50_concat.fasta \
+#--scf 100 \
+#--prefix sc.concord \
+#-nt $SLURM_CPUS_ON_NODE
+
+
+
+#-p ../Alignments/Nuclear/Diploid_only/SC_loci/Trimal_post_manual_realignment \
+

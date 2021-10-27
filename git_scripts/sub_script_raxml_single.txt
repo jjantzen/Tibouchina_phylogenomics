@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#SBATCH --job-name=treePL_bs
+#SBATCH -o treePL_bs.out
+#SBATCH -e treePL_bs.err
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=1gb
+#SBATCH --time=00:10:00
+#SBATCH --qos=soltis-b
+
+pwd; hostname; date
+
+module load gcc/5.2.0
+module load raxml/8.2.10
+
+alignment="ITS_alignment_dating.fasta"
+constraint="ITS_tree_rooted.tre"
+
+#raxmlHPC-PTHREADS-SSE3 -f j -m GTRCAT -b $RANDOM -# 100 -s $alignment -n bs4treepl -T $SLURM_CPUS_PER_TASK
+
+for b in {0..99}; do
+raxmlHPC-PTHREADS-SSE3 -f e -t $constraint \
+-m GTRCAT \
+-s ITS_alignment_dating.fasta.BS${b} \
+-n ITS_tree_BS${b} -T $SLURM_CPUS_PER_TASK; done

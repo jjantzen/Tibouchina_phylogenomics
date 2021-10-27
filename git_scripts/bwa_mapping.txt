@@ -1,0 +1,43 @@
+#!/bin/sh
+#SBATCH --job-name=bwa
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=8gb
+#SBATCH --time=72:00:00
+#SBATCH --output=logs/bwa.%A.%a.out
+#SBATCH --error=logs/bwa.%A.%a.err
+#SBATCH --qos=soltis-b
+
+module load samtools
+module load bcftools
+module load bwa
+
+## Remember to index reference using bwa index reference.fasta
+bwa index renamed_baits.fasta
+
+mkdir tmp
+
+mkdir bwa_renamed_output
+
+DIRS=($(ls -d /ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Cleaning/Data/Processed/cleaned_trimmed_reads/*/))
+
+for DIR in ${DIRS[@]}; do
+  R1FILE="${DIR}"*-READ1.fastq
+ 
+  R2FILE="${DIR}"*-READ2.fastq
+  HEAD=`echo $DIR | cut -d'/' -f2- | rev | cut -d'/' -f2 | rev`
+
+  #Run bwa for cleaned reads
+ # bwa mem -t 8 renamed_baits.fasta $R1FILE $R2FILE > ./tmp/temp.sam
+
+ # samtools sort -T ./tmp/aln.sorted -o ./bwa_renamed_sorted/${HEAD}.bam ./tmp/temp.sam
+  
+ samtools phase -AF -T ./tmp/aln.phased -o ./bwa_renamed_phased/${HEAD}.bam ./bwa_renamed_sorted/${HEAD}.bam
+
+  rm ./tmp/temp.sam  ./tmp/aln.sorted* ./tmp/aln.phased*
+
+done
+

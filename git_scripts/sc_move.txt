@@ -1,0 +1,1 @@
+cat /ufrc/soltis/jjantzen/Dissertation/Analysis/2020_analyses/SC_loci.txt | xargs mv -t SC_loci

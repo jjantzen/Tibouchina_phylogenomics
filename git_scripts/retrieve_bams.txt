@@ -1,0 +1,6 @@
+shopt -s globstar
+cp **/*marked.bam ./bams/
+    
+OR
+    
+find . -name '*.marked.bam' -exec cp {} ../bams/ \;

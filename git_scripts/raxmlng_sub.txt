@@ -1,0 +1,29 @@
+#!/bin/sh
+#SBATCH --job-name=raxmlng
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=5
+#SBATCH --mem=3gb
+#SBATCH --time=7-00:00:00
+#SBATCH --output=logs/sc.iqtree.%j.out
+#SBATCH --error=logs/sc.iqtree.%j.err
+
+
+cd $SLURM_SUBMIT_DIR
+date
+hostname
+
+module purge
+module load raxml-ng
+
+tree="./sc.concat.treefile"
+alignment="./SC_diploid_trimal50_concat.fasta"
+partition="./sc.concat.best_scheme.txt"
+
+raxml-ng --parse --msa $alignment --model $partition
+
+raxml-ng --all --msa $alignment --model $partition --prefix SC_TBE --seed 2 --threads 2 --bs-metric fbp,tbe --brlen scaled
+
+#raxml-ng --support --tree $tree --bs-trees allbootstraps --prefix TBE --seed 2 --threads 2 --bs-metric fbp,tbe
