@@ -4,7 +4,7 @@
 #SBATCH -o logs/treePL_ITS_part3.out
 #SBATCH -e logs/treePL_ITS_part3.err
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=jjantzen@ufl.edu
+#SBATCH --mail-user=user@ufl.edu
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
